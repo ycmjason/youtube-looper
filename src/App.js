@@ -1,28 +1,23 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import YoutubeUrlInput from './components/YoutubeUrlInput';
+import useYTPlayer from './hooks/useYTPlayer';
 import './App.css';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+const App = () => {
+  const [videoId, setVideoId] = useState('');
+
+  useYTPlayer({
+    playerId: 'yt-player',
+    videoId,
+  });
+
+  return (
+    <div className="App">
+      <h1>Youtube Looper</h1>
+      <YoutubeUrlInput onSubmit={ setVideoId }/>
+      <div id="yt-player"></div>
+    </div>
+  );
 }
 
 export default App;
