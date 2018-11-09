@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 import YoutubeUrlInput from './components/YoutubeUrlInput';
-import useYTPlayer from './hooks/useYTPlayer';
+import Looper from './components/Looper';
 import './App.css';
 
-const App = () => {
+export default () => {
   const [videoId, setVideoId] = useState('');
-
-  useYTPlayer({
-    playerId: 'yt-player',
-    videoId,
-  });
 
   return (
     <div className="App">
       <h1>Youtube Looper</h1>
-      <YoutubeUrlInput onSubmit={ setVideoId }/>
-      <div id="yt-player"></div>
+      <YoutubeUrlInput onSubmit={setVideoId}/>
+      <div className="App_LooperContainer">
+        <Looper videoId={videoId} />
+      </div>
     </div>
   );
 }
-
-export default App;

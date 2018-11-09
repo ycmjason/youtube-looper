@@ -7,10 +7,19 @@ const YTPromise = new Promise(res => {
   window.onYouTubeIframeAPIReady = () => res(window.YT);
 });
 
-const createYTPlayer = async ({
+export const PlayerState = {
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 4,
+};
+
+const createYTPlayer = ({
   playerId,
   videoId,
-}) => {
+  events = {},
+}) => new Promise(async (res, rej) => {
   const YT = await YTPromise;
 
   const player = new YT.Player(playerId, {
@@ -20,11 +29,21 @@ const createYTPlayer = async ({
     playerVars: {
       autoplay: 1,
       controls: 0,
+      disablekb: 1,
+      fs: 0,
+    },
+    events: {
+      onReady () {
+        res(player);
+        events.onReady && events.onReady();
+      },
+      onError (err) {
+        rej(err);
+        events.onError && events.onError();
+      },
     },
   });
-
-  return player;
-};
+});
 
 export default ({
   playerId,
