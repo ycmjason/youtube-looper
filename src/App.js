@@ -4,7 +4,7 @@ import Looper from './components/Looper';
 import './App.css';
 
 export default () => {
-  const [videoId, setVideoId] = useState('');
+  const [videoId, setVideoId] = useState('izkqPdVAdL4'); // TODO: replace id with ''
 
   return (
     <div className="App">

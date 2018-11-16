@@ -8,11 +8,12 @@ const YTPromise = new Promise(res => {
 });
 
 export const PlayerState = {
+  UNSTARTED: -1,
   ENDED: 0,
   PLAYING: 1,
   PAUSED: 2,
   BUFFERING: 3,
-  CUED: 4,
+  CUED: 5,
 };
 
 const createYTPlayer = ({
@@ -33,6 +34,7 @@ const createYTPlayer = ({
       fs: 0,
     },
     events: {
+      ...events,
       onReady () {
         res(player);
         events.onReady && events.onReady();
@@ -50,16 +52,25 @@ export default ({
   videoId,
 }) => {
   const [player, setPlayer] = useState(null);
+  const [playerState, setPlayerState] = useState(PlayerState.UNSTARTED);
 
   useEffect(async () => {
     if (!playerId || !videoId) return;
     if (!player) {
-      const newPlayer = await createYTPlayer({ playerId, videoId });
+      const newPlayer = await createYTPlayer({
+        playerId,
+        videoId,
+        events: {
+          onStateChange () {
+            setPlayerState(newPlayer.getPlayerState());
+          },
+        },
+      });
       return setPlayer(newPlayer);
     }
 
-    player.loadVideoById(videoId);
+    return player.loadVideoById(videoId);
   }, [playerId, videoId]);
   
-  return player;
+  return [player, playerState];
 };

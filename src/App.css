@@ -7,5 +7,6 @@
 .App_LooperContainer {
   display: flex;
   padding: 1rem;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
