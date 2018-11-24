@@ -5,6 +5,7 @@ export default ({
   currentTime,
   totalTime,
   onSeek = () => {},
+  onSeeking = () => {},
 }) => {
   const timeBarRef = useRef(null);
 
@@ -15,12 +16,14 @@ export default ({
     const relativeX = clientX - x;
     const position = relativeX / width;
     const seekToTime = totalTime * position;
-    console.log(seekToTime);
     onSeek(seekToTime);
   };
 
   return (
-    <div className="timeBar" ref={timeBarRef} onClick={seek}>
+    <div className="timeBar"
+        ref={timeBarRef}
+        onMouseDown={onSeeking}
+        onMouseUp={seek}>
       <div className="timeBar_pointer" style={{ left }}></div>
     </div>
   );

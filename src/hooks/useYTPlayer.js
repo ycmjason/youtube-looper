@@ -7,7 +7,7 @@ const YTPromise = new Promise(res => {
   window.onYouTubeIframeAPIReady = () => res(window.YT);
 });
 
-export const PlayerState = {
+export const PlayerStates = {
   UNSTARTED: -1,
   ENDED: 0,
   PLAYING: 1,
@@ -52,7 +52,7 @@ export default ({
   videoId,
 }) => {
   const [player, setPlayer] = useState(null);
-  const [playerState, setPlayerState] = useState(PlayerState.UNSTARTED);
+  const [playerState, setPlayerState] = useState(PlayerStates.UNSTARTED);
 
   useEffect(async () => {
     if (!playerId || !videoId) return;

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import useYTPlayer, { PlayerState } from '../hooks/useYTPlayer';
+import useYTPlayer, { PlayerStates } from '../hooks/useYTPlayer';
 
 let counter = 0;
 
 export default ({
   videoId,
-  onTick = () => {},
-  onLoaded = () => {},
-  playbackRate = 1,
   start = 0,
   end = Math.Infinity,
+  playbackRate = 1,
+  isPlaying = true,
+  onTick = () => {},
+  onLoaded = () => {},
 }) => {
   const [playerId] = useState(`yt-player-${counter++}`);
   const [player, playerState] = useYTPlayer({
@@ -34,9 +35,22 @@ export default ({
     player.setPlaybackRate(playbackRate);
   }, [player, playbackRate]);
 
+  useEffect(() => {
+    if (!player) return;
+    const isAlreadyPlaying = player.getPlayerState() === PlayerStates.PLAYING;
+
+    if (!isAlreadyPlaying && isPlaying) {
+      player.playVideo();
+    }
+
+    if (isAlreadyPlaying && !isPlaying) {
+      player.pauseVideo();
+    }
+  }, [player, isPlaying]);
+
   const tick = () => {
     if (!player) return;
-    if (player.getPlayerState() === PlayerState.PLAYING) {
+    if (player.getPlayerState() === PlayerStates.PLAYING) {
       requestAnimationFrame(() => {
         onTick(player.getCurrentTime());
         tick();
