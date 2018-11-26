@@ -3,9 +3,23 @@ import useYTPlayer, { PlayerStates } from '../hooks/useYTPlayer';
 
 let counter = 0;
 
+const onAnimationFrame = (fn) => {
+  let stopped = false;
+  const wfn = () => {
+    if (stopped) return;
+    requestAnimationFrame(() => {
+      fn();
+      wfn();
+    });
+  };
+
+  wfn();
+  return () => stopped = true;
+};
+
 export default ({
   videoId,
-  start = 0,
+  startTime = 0,
   end = Math.Infinity,
   playbackRate = 1,
   isPlaying = true,
@@ -27,8 +41,8 @@ export default ({
 
   useEffect(() => {
     if (!player) return;
-    player.seekTo(start, true);
-  }, [player, start]);
+    player.seekTo(startTime, true);
+  }, [player, startTime]);
 
   useEffect(() => {
     if (!player) return;
@@ -37,7 +51,14 @@ export default ({
 
   useEffect(() => {
     if (!player) return;
-    const isAlreadyPlaying = player.getPlayerState() === PlayerStates.PLAYING;
+    if (isPlaying) {
+      return onAnimationFrame(() => onTick(player.getCurrentTime()));
+    }
+  }, [player, isPlaying]);
+
+  useEffect(() => {
+    if (!player) return;
+    const isAlreadyPlaying = playerState === PlayerStates.PLAYING;
 
     if (!isAlreadyPlaying && isPlaying) {
       player.playVideo();
@@ -46,19 +67,7 @@ export default ({
     if (isAlreadyPlaying && !isPlaying) {
       player.pauseVideo();
     }
-  }, [player, isPlaying]);
-
-  const tick = () => {
-    if (!player) return;
-    if (player.getPlayerState() === PlayerStates.PLAYING) {
-      requestAnimationFrame(() => {
-        onTick(player.getCurrentTime());
-        tick();
-      });
-    }
-  };
-
-  useEffect(tick, [playerState]);
+  }, [player, playerState, isPlaying]);
 
   return (
     <div id={playerId}></div>
